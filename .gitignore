@@ -1,4 +1,21 @@
+# Ansible
+*.retry
+*.log
+ansible.log
+
+# Vault / secrets / keys
 *.vault
+.vault_pass
+vault_pass.txt
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+
+# Inventory variants
+inventories/*/hosts
+inventories/*/host_vars/
+inventories/*/group_vars/
 
 # OS / editor
 .DS_Store
