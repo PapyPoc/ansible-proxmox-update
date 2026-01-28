@@ -1,0 +1,139 @@
+---
+- name: Proxmox snapshot before upgrade (running guests, exclude ansible)
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    api_url: "{{ lookup('ansible.builtin.env','PROXMOX_URL') | default('', true) }}"
+    _u: "{{ api_url | urlsplit }}"
+    api_host: "{{ _u.hostname }}"
+    api_port: "{{ (_u.port | default(8006)) | int }}"
+    api_user: "{{ lookup('ansible.builtin.env','PROXMOX_USER') | default('', true) }}"
+    api_token_id: "{{ lookup('ansible.builtin.env','PROXMOX_TOKEN_ID') | default('', true) }}"
+    api_token_secret: "{{ lookup('ansible.builtin.env','PROXMOX_TOKEN_SECRET') | default('', true) }}"
+    snapshot_name: "pre-upgrade-{{ now(utc=true).strftime('%Y%m%d-%H%M') }}"
+    snapshot_description: "Snapshot before Ansible upgrade"
+    snapshot_retention: 2
+
+  pre_tasks:
+    - name: Ensure Proxmox API env vars are set
+      ansible.builtin.assert:
+        that:
+          - api_url | length > 0
+          - api_host | length > 0
+          - api_port | int > 0
+          - api_user | length > 0
+          - api_token_id | length > 0
+          - api_token_secret | length > 0
+        fail_msg: >-
+          Missing one or more env vars: PROXMOX_URL / PROXMOX_HOST / PROXMOX_PORT / PROXMOX_USER / PROXMOX_TOKEN_ID / PROXMOX_TOKEN_SECRET
+          (Check your vault loading script)
+
+  tasks:
+    - name: Build list of running guests (excluding ansible)
+      ansible.builtin.set_fact:
+        running_guests: >-
+          {{
+            (
+              groups.get('proxmox_all_running', [])
+              + groups.get('proxmox_running', [])
+            )
+            | unique
+            | difference(['ansible'])
+          }}
+
+    - name: Show what will be snapshotted
+      ansible.builtin.debug:
+        msg: "Will snapshot: {{ running_guests }} with name {{ snapshot_name }} (keep last {{ snapshot_retention }})"
+
+    - name: Create snapshots (keep last N)
+      community.proxmox.proxmox_snap:
+        api_host: "{{ api_host }}"
+        api_port: "{{ api_port }}"
+        api_user: "{{ api_user }}"
+        api_token_id: "{{ api_token_id }}"
+        api_token_secret: "{{ api_token_secret }}"
+        hostname: "{{ hostvars[item].proxmox_node }}"
+        vmid: "{{ hostvars[item].proxmox_vmid }}"
+        snapname: "{{ snapshot_name }}"
+        description: "{{ snapshot_description }}"
+        retention: "{{ snapshot_retention }}"
+        state: present
+      loop: "{{ running_guests }}"
+      loop_control:
+        label: "{{ item }} ({{ hostvars[item].proxmox_node }} / {{ hostvars[item].proxmox_vmid }})"
+
+
+- name: Upgrade + cleanup on running guests (exclude ansible)
+  hosts: "proxmox_all_running:!ansible"
+  become: true
+  gather_facts: true
+  serial: 2
+
+  tasks:
+    - name: Debian/Ubuntu - update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+      register: apt_update
+      when: ansible_facts.os_family == "Debian"
+
+    - name: Debian/Ubuntu - dist upgrade
+      ansible.builtin.apt:
+        upgrade: dist
+      register: apt_upgrade
+      when: ansible_facts.os_family == "Debian"
+
+    - name: Debian/Ubuntu - autoremove unused packages
+      ansible.builtin.apt:
+        autoremove: true
+        purge: true
+      register: apt_autoremove
+      when: ansible_facts.os_family == "Debian"
+
+    - name: Debian/Ubuntu - autoclean apt cache
+      ansible.builtin.apt:
+        autoclean: true
+      register: apt_autoclean
+      when: ansible_facts.os_family == "Debian"
+
+    - name: Check if reboot is required (Debian/Ubuntu)
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: reboot_required
+      when: ansible_facts.os_family == "Debian"
+
+    - name: Reboot if required
+      ansible.builtin.reboot:
+        msg: "Reboot triggered by Ansible after upgrade"
+        reboot_timeout: 900
+      when:
+        - ansible_facts.os_family == "Debian"
+        - reboot_required.stat.exists | default(false)
+
+  post_tasks:
+    - name: Build per-host upgrade summary
+      ansible.builtin.set_fact:
+        upgrade_summary:
+          host: "{{ inventory_hostname }}"
+          upgraded: "{{ apt_upgrade.changed | default(false) }}"
+          reboot: "{{ reboot_required.stat.exists | default(false) }}"
+
+- name: Global upgrade summary
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Show global upgrade summary (pretty table)
+      ansible.builtin.shell: |
+        echo -e "\
+        \033[1m===== Upgrade summary =====\033[0m
+        Host            | Upgraded | Reboot
+        ----------------+----------+--------
+        {% for h in groups['proxmox_all_running'] | difference(['ansible']) | sort %}
+        {{ "%-15s"|format(h) }} | {% if hostvars[h].upgrade_summary.upgraded | default(false) %}\033[32mYES\033[0m{% else %}\033[90mNO \033[0m{% endif %} | {% if hostvars[h].upgrade_summary.reboot | default(false) %}\033[33mYES\033[0m{% else %}\033[32mNO \033[0m{% endif %}
+        {% endfor %}"
+      args:
+        executable: /bin/bash
+      run_once: true
+      changed_when: false

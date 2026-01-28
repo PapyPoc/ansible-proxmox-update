@@ -1,1 +1,36 @@
+plugin: community.proxmox.proxmox
+url: "{{ lookup('ansible.builtin.env','PROXMOX_URL') | default('', true) }}"
+user: "{{ lookup('ansible.builtin.env','PROXMOX_USER') | default('', true) }}"
+token_id: "{{ lookup('ansible.builtin.env','PROXMOX_TOKEN_ID') | default('', true) }}"
+token_secret: "{{ lookup('ansible.builtin.env','PROXMOX_TOKEN_SECRET') | default('', true) }}"
+validate_certs: false
+want_facts: true
 
+keyed_groups:
+  - key: proxmox_type
+    prefix: proxmox
+  - key: proxmox_status
+    prefix: proxmox
+
+compose:
+  # IP des machines
+  ansible_host: >-
+    (
+      (
+        (proxmox_agent_interfaces | default([]) | to_json)
+        | regex_findall('(?:[0-9]{1,3}\.){3}[0-9]{1,3}/[0-9]{1,2}')
+        | reject('match','^127\.')
+        | list | first | default('')
+        | regex_replace('/.*$', '')
+      )
+      or
+      (
+        (proxmox_tags | default('')).split(';')
+        | select('match','^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$')
+        | list | first | default('')
+      )
+    )
+
+  # user SSH : LXC=root, VM=poc
+  ansible_user: >-
+    ("root" if proxmox_vmtype == "lxc" else "poc")
