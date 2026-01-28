@@ -22,7 +22,8 @@ This repository contains:
 - a maintenance script to automate certain tasks.
 
 ## ⚙️ Prerequisites
-- Ansible >= 2.14 (ideally 2.15+)
+- Ansible >= 2.14 (ideally 2.19+)
+- Ansible collection (community.proxmox.proxmox_snap, community.proxmox.proxmox)
 - SSH access to PVE nodes
 - SSH keys configured on each VM or LXC
 
