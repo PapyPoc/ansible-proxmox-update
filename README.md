@@ -33,6 +33,10 @@ This repository contains:
 
 ## Vault exemple
 ```text.
+ansible-vault create vault/proxmox_secrets.vault
+```
+
+```text.
 url: "https://10.0.0.1:8006"
 user: "your user"
 token_id: "your token name"
