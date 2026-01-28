@@ -18,15 +18,14 @@ Automatisation de la **mise à jour des VM et LXC** sur un serveur **Proxmox VE*
 ├─ README.md
 ```
 Ce dépôt contient :
-- des playbooks Ansible pour administrer / mettre à jour Proxmox VE,
+- des playbooks Ansible pour administrer / mettre à jour les VM et LXC,
 - un script de maintenance pour automatiser certaines tâches.
 
-## Pré-requis
+## ⚙️ Pré-requis
 - Ansible >= 2.14 (idéalement 2.15+)
 - Accès SSH aux nœuds PVE
-- Clés SSH configurées (recommandé)
+- Clés SSH configurées sur chaque VM ou LXC
 
-## Structure
+## 🗂️ Structure des dossiers
 - `playbooks/` : playbooks Ansible
-- `scripts/` : scripts utilitaires (shell)
-
+- `scripts/` : script shell de lancement des playbooks
