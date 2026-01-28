@@ -29,7 +29,17 @@ This repository contains:
 ## 🗂️ Folder structure
 - `playbooks/`: Ansible playbooks
 - `scripts/`: shell script for launching playbooks
+- `vault/`: Ansible vault
+
+## Vault exemple
+```text.
+url: "https://10.0.0.1:8006"
+user: "your user"
+token_id: "your token name"
+proxmox_token_secret: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+```
 
 ## 🚀 Launching the script
 chmod 700 script/update.sh
+
 ./scripts/update.sh
