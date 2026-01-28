@@ -29,7 +29,7 @@ Ce dépôt contient :
 - Accès SSH aux nœuds PVE
 - Clés SSH configurées sur chaque VM ou LXC
 
-**## Exemple de ficher VAULT
+## Exemple de ficher VAULT
 ```text.
 ansible-vault create vault/proxmox_secrets.vault
 ```
@@ -39,7 +39,7 @@ url: "https://10.0.0.1:8006"
 user: "your user"
 token_id: "your token name"
 proxmox_token_secret: "your token secret"
-```**
+```
 
 ## 🗂️ Structure des dossiers
 - `playbooks/` : playbooks Ansible
