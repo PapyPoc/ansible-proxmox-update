@@ -1,31 +1,22 @@
-# Proxmox (PVE) - Maintenance & Ansible Playbooks
+# 🧰 Proxmox (PVE) – Maintenance & Ansible Playbooks
 
-Mise à jour des VM et LXC d'un serveur Proxmox
-## Arborescence
+Automatisation de la **mise à jour des VM et LXC** sur un serveur **Proxmox VE** à l’aide d’Ansible et de scripts shell.
+
+---
+
+## 📁 Arborescence du projet
+
+```text
 .
-
 ├─ ansible.cfg
-
 ├─ playbooks/
-
 │  ├─ pve.upgrade.yml
-
 │  └─ pve.proxmox.yml
-
 ├─ scripts/
-
 │  └─ maintenance.sh
-
-├─ inventories/
-
-│  └─ hosts.ini
-
 ├─ .gitignore
-
 ├─ README.md
-
-└─ .github/workflows/lint.yml
-
+```
 Ce dépôt contient :
 - des playbooks Ansible pour administrer / mettre à jour Proxmox VE,
 - un script de maintenance pour automatiser certaines tâches.
