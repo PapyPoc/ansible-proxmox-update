@@ -1,0 +1,6 @@
+# Forcer la reconnaissance Ansible
+*.yml linguist-language=Ansible
+*.yaml linguist-language=Ansible
+
+# Shell scripts
+*.sh linguist-language=Shell
