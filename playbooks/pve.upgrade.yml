@@ -1,4 +1,3 @@
----
 - name: Proxmox snapshot before upgrade (running guests, exclude ansible)
   hosts: localhost
   gather_facts: false
