@@ -1,9 +1,8 @@
 # 🧰 Proxmox (PVE) – Maintenance & Ansible Playbooks
----
 
 Automatisation de la **mise à jour des VM et LXC** sur un serveur **Proxmox VE** à l’aide d’Ansible et de scripts shell.
 
----
+--
 
 ## 📁 Arborescence du projet
 
