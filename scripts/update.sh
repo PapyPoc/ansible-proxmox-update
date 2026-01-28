@@ -3,8 +3,7 @@ set -euo pipefail
 
 WORKDIR="/home/poc/ansible/upgrade"
 VAULT_FILE="$WORKDIR/vault/proxmox_secrets.vault"
-INV="$WORKDIR/pve.proxmox.yaml"
-PLAY="$WORKDIR/pve.upgrade.yml"
+INV="$WORKDIR/playbooks/pve.proxmox.yaml"
 cd "$WORKDIR"
 
 echo "[1/3] Load Proxmox vars from vault into env"
