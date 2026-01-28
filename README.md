@@ -40,7 +40,7 @@ ansible-vault create vault/proxmox_secrets.vault
 url: "https://10.0.0.1:8006"
 user: "your user"
 token_id: "your token name"
-proxmox_token_secret: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+proxmox_token_secret: "your token secret"
 ```
 
 ## 🚀 Launching the script
