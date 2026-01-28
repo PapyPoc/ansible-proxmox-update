@@ -13,7 +13,7 @@ Automatisation de la **mise à jour des VM et LXC** sur un serveur **Proxmox VE*
 │  ├─ pve.upgrade.yml
 │  └─ pve.proxmox.yml
 ├─ scripts/
-│  └─ maintenance.sh
+│  └─ update.sh
 ├─ .gitignore
 ├─ README.md
 ```
