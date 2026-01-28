@@ -37,9 +37,11 @@
               groups.get('proxmox_all_running', [])
               + groups.get('proxmox_running', [])
             )
-            | unique
-            | difference(['ansible'])
           }}
+
+    - name: Show available proxmox groups
+      ansible.builtin.debug:
+        var: groups.keys()
 
     - name: Show what will be snapshotted
       ansible.builtin.debug:
@@ -61,7 +63,6 @@
       loop: "{{ running_guests }}"
       loop_control:
         label: "{{ item }} ({{ hostvars[item].proxmox_node }} / {{ hostvars[item].proxmox_vmid }})"
-
 
 - name: Upgrade + cleanup on running guests (exclude ansible)
   hosts: "proxmox_all_running:!ansible"
@@ -122,17 +123,21 @@
   hosts: localhost
   gather_facts: false
 
+  vars:
+    summary_hosts: >-
+      {{
+        groups.get('proxmox_all_running',
+          groups.get('proxmox_running', [])
+        )
+      }}
+
   tasks:
-    - name: Show global upgrade summary (pretty table)
-      ansible.builtin.shell: |
-        echo -e "\
-        \033[1m===== Upgrade summary =====\033[0m
-        Host            | Upgraded | Reboot
-        ----------------+----------+--------
-        {% for h in groups['proxmox_all_running'] | difference(['ansible']) | sort %}
-        {{ "%-15s"|format(h) }} | {% if hostvars[h].upgrade_summary.upgraded | default(false) %}\033[32mYES\033[0m{% else %}\033[90mNO \033[0m{% endif %} | {% if hostvars[h].upgrade_summary.reboot | default(false) %}\033[33mYES\033[0m{% else %}\033[32mNO \033[0m{% endif %}
-        {% endfor %}"
-      args:
-        executable: /bin/bash
-      run_once: true
-      changed_when: false
+    - name: Show global upgrade summary
+      ansible.builtin.debug:
+        msg: |
+          ===== Upgrade summary =====
+          {% for h in summary_hosts | sort %}
+          - {{ h }} :
+            upgraded={{ hostvars[h].upgrade_summary.upgraded | default(false) }}
+            reboot={{ hostvars[h].upgrade_summary.reboot | default(false) }}
+          {% endfor %}

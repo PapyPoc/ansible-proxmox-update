@@ -3,7 +3,7 @@ set -euo pipefail
 
 WORKDIR="/home/poc/ansible/upgrade"
 VAULT_FILE="$WORKDIR/vault/proxmox_secrets.vault"
-INV="$WORKDIR/playbooks/pve.proxmox.yaml"
+INV="$WORKDIR/playbooks/pve.proxmox.yml"
 PLAY="$WORKDIR/playbooks/pve.upgrade.yml"
 cd "$WORKDIR"
 
@@ -24,5 +24,5 @@ done
 
 echo "[2/3] Proxmox snapshots (retention=2) + upgrade"
 ansible-playbook -i "$INV" "$PLAY"
-
+#ansible-inventory -i "$INV" --graph
 echo "[3/3] Done."
