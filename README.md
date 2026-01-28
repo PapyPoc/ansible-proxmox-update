@@ -37,17 +37,5 @@ Ce dépôt contient :
 
 ## Structure
 - `playbooks/` : playbooks Ansible
-- `inventories/` : inventaires
 - `scripts/` : scripts utilitaires (shell)
 
-## Démarrage rapide
-
-### 1) Définir l’inventaire
-Éditer `inventories/hosts.ini`.
-
-### 2) Lancer un playbook
-Exemples :
-
-```bash
-ansible-playbook -i inventories/hosts.ini playbooks/pve.proxmox.yml
-ansible-playbook -i inventories/hosts.ini playbooks/pve.upgrade.yml
