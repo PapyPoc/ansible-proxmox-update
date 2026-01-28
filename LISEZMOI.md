@@ -44,6 +44,7 @@ proxmox_token_secret: "your token secret"
 ## 🗂️ Structure des dossiers
 - `playbooks/` : playbooks Ansible
 - `scripts/` : script shell de lancement des playbooks
+- `vault/`: Ansible vault
 
 ## 🚀 Lancement du script
 chmod 700 script/update.sh
