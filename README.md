@@ -1,3 +1,7 @@
+![Ansible](https://img.shields.io/badge/ansible-automation-red)
+![Shell](https://img.shields.io/badge/shell-bash-lightgrey)
+
+
 # 🧰 Proxmox (PVE) – Maintenance & Ansible Playbooks
 
 Automating **VM and LXC updates** on a **Proxmox VE** server using Ansible and shell scripts.
