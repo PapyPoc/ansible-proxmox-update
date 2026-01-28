@@ -2,7 +2,7 @@
 set -euo pipefail
 
 WORKDIR="/home/poc/ansible/upgrade"
-VAULT_FILE="$WORKDIR/proxmox_secrets.vault"
+VAULT_FILE="$WORKDIR/vault/proxmox_secrets.vault"
 INV="$WORKDIR/pve.proxmox.yaml"
 PLAY="$WORKDIR/pve.upgrade.yml"
 cd "$WORKDIR"
