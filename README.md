@@ -29,3 +29,7 @@ Ce dépôt contient :
 ## 🗂️ Structure des dossiers
 - `playbooks/` : playbooks Ansible
 - `scripts/` : script shell de lancement des playbooks
+
+## Lancement du script
+chmod 700 script/update.sh
+./scripts/update.sh
