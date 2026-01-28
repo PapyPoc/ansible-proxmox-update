@@ -2,6 +2,7 @@
 Mise à jour des VM et LXC d'un serveur Proxmox
 ## Arborescence
 .
+
 ├─ ansible.cfg
 
 ├─ playbooks/
