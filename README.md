@@ -6,8 +6,6 @@
 
 Automating **VM and LXC updates** on a **Proxmox VE** server using Ansible and shell scripts.
 
----
-
 ## 📁 Project tree structure
 
 ```text.
